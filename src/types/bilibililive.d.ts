@@ -1,13 +1,21 @@
 // BilibiliLive object which is available on live.bilibili.com
 
-declare class BilibiliLive {
-  static ANCHOR_UID: int;
-  static AREA_ID: int;
-  static COLORFUL_LOGGER: bool;
-  static INIT_TIME: int;
-  static PARENT_AREA_ID: int;
-  static RND: int;
-  static ROOMID: int;
-  static SHORT_ROOMID: int;
-  static UID: int;
+export {};
+
+declare global {
+  interface Window {
+    BilibiliLive: typeof BilibiliLive;
+  }
+
+  let BilibiliLive: {
+    ANCHOR_UID: number;
+    AREA_ID: number;
+    COLORFUL_LOGGER: boolean;
+    INIT_TIME: number;
+    PARENT_AREA_ID: number;
+    RND: number;
+    ROOMID: number;
+    SHORT_ROOMID: number;
+    UID: number;
+  };
 }

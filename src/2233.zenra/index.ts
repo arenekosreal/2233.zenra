@@ -9,7 +9,7 @@ const defines = {
   canvasWidth: 400,
   canvasHeight: 500,
   assetsAddressBase:
-    'https://fastly.jsdelir.net/gh/arenekosreal/2233.zenra/assets/',
+    'https://fastly.jsdelivr.net/gh/arenekosreal/2233.zenra/assets/',
   msgs: [
     '你要干嘛呀？',
     '鼠…鼠标放错地方了！',
@@ -31,7 +31,7 @@ function getAssetsAddress(character: '22' | '33', large: boolean) {
 }
 
 function getCharacterType(): '22' | '33' {
-  const apiEndpoint = `https://api.live.bilibili.com/live/getRoomKanBanModel?roomid=${BilibiliLive.ROOMID}`;
+  const apiEndpoint = `https://api.live.bilibili.com/live/getRoomKanBanModel?roomid=${window.BilibiliLive.ROOMID}`;
   let characterType: '22' | '33' = '22';
   const xhr = new XMLHttpRequest();
   xhr.responseType = 'json';
