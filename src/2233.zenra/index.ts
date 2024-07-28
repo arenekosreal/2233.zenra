@@ -17,7 +17,7 @@ const defines = {
     '喵喵喵？',
     '萝莉控是什么呀？',
     '怕怕',
-    '你看到我的小熊了吗',
+    '你看到我的小熊了吗？',
   ],
 };
 const config = {
@@ -94,8 +94,7 @@ function onVMObserveTriggered(
           name: character,
           path: getAssetsAddress(character, window.devicePixelRatio > 1),
           scale: 0.3,
-          position: [10, 60],
-          stageStyle: {},
+          position: [10, 100],
         },
       ],
       parentElement: parentElement,
@@ -103,9 +102,20 @@ function onVMObserveTriggered(
         disable: true,
       },
       tips: {
+        copyTips: {
+          duration: 0,
+        },
+        idleTips: {
+          duration: 0,
+        },
+        messageLine: 1,
         style: {
           minHeight: defines.tipsHeight,
           minWidth: defines.tipsWidth,
+        },
+        welcomeTips: {
+          duration: 0,
+          message: {},
         },
       },
       transitionTime: 0,
@@ -116,11 +126,8 @@ function onVMObserveTriggered(
     );
     newCanvas.className = defines.canvasClass;
     const movementManager = new MovementManager(newCanvas.parentElement);
-    window.addEventListener(
-      'DOMContentLoaded',
-      movementManager.overrideHandlers,
-    );
-    window.addEventListener('beforeunload', movementManager.resetHandlers);
+    oml2d.onStageSlideIn(movementManager.overrideHandlers);
+    oml2d.onStageSlideOut(movementManager.resetHandlers);
     newCanvas.addEventListener('click', () => {
       const i = Math.floor(Math.random() * defines.msgs.length);
       oml2d.tipsMessage(defines.msgs[i], 1000, 5);
