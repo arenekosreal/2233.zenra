@@ -37,22 +37,24 @@ function getAssetsAddress(character: CharacterType, large: boolean) {
 }
 
 function getCharacterType(): CharacterType {
-  const apiEndpoint = `https://api.live.bilibili.com/live/getRoomKanBanModel?roomid=${window.BilibiliLive.ROOMID}`;
-  let characterType: CharacterType;
+  const roomId = window.BilibiliLive?.ROOMID ?? location.pathname.split('/')[1];
+  const apiEndpoint = `https://api.live.bilibili.com/live/getRoomKanBanModel?roomid=${roomId}`;
   const xhr = new XMLHttpRequest();
-  xhr.responseType = 'json';
-  xhr.onload = (_) => {
-    const rawLabel = xhr.response.label;
-    switch (rawLabel) {
-      case '33':
-        characterType = CharacterType.C33;
-        break;
-      default:
-        characterType = CharacterType.C22;
-    }
-  };
-  xhr.open('GET', apiEndpoint);
+  xhr.open('GET', apiEndpoint, false);
   xhr.send();
+
+  let rawLabel: string | null = null;
+  let characterType: CharacterType;
+  if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+    rawLabel = JSON.parse(xhr.responseText).label;
+  }
+  switch (rawLabel) {
+    case '33':
+      characterType = CharacterType.C33;
+      break;
+    default:
+      characterType = CharacterType.C22;
+  }
   return characterType;
 }
 
