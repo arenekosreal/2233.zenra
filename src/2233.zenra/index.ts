@@ -6,6 +6,7 @@ const defines = {
   canvasClass: 'haruna-canvas',
   canvasSelector: 'canvas.haruna-canvas',
   canvasId: '#oml2d-canvas',
+  canvasNewContainerSelector: 'div.aside-area',
   canvasWidth: 400,
   canvasHeight: 500,
   assetsAddressBase:
@@ -58,7 +59,9 @@ function onVMObserveTriggered(
       parentElement.removeChild(canvasElement);
     } else if (config.forceAdd) {
       console.log('未发现2233，强制添加');
-      parentElement = document.body;
+      parentElement = document.querySelector(
+        defines.canvasNewContainerSelector,
+      );
     } else {
       console.log('未发现2233，且不强制添加');
       needReplaceOrAdd = false;
