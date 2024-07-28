@@ -7,8 +7,8 @@ const defines = {
   canvasSelector: 'canvas.haruna-canvas',
   canvasId: '#oml2d-canvas',
   canvasNewContainerSelector: 'div.aside-area',
-  canvasWidth: 400,
-  canvasHeight: 500,
+  tipsWidth: '100px',
+  tipsHeight: '20px',
   assetsAddressBase:
     'https://fastly.jsdelivr.net/gh/arenekosreal/2233.zenra/assets/',
   msgs: [
@@ -93,10 +93,9 @@ function onVMObserveTriggered(
         {
           name: character,
           path: getAssetsAddress(character, window.devicePixelRatio > 1),
-          stageStyle: {
-            width: defines.canvasWidth,
-            height: defines.canvasHeight,
-          },
+          scale: 0.3,
+          position: [10, 60],
+          stageStyle: {},
         },
       ],
       parentElement: parentElement,
@@ -105,8 +104,8 @@ function onVMObserveTriggered(
       },
       tips: {
         style: {
-          textOverflow: 'ellipsis',
-          minHeight: '0px',
+          minHeight: defines.tipsHeight,
+          minWidth: defines.tipsWidth,
         },
       },
       transitionTime: 0,
