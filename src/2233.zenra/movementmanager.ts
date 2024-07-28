@@ -6,18 +6,27 @@ class MovementManager {
 
   constructor(container: HTMLElement) {
     this.container = container;
-    this.container.onmousedown = this.onMouseDown;
-    this.container.onmousemove = this.onMouseMove;
-    this.container.onmouseup = this.onMouseUp;
   }
 
-  public onMouseDown(e: MouseEvent) {
+  public overrideHandlers() {
+    this.container.addEventListener('onmousedown', this.onMouseDown);
+    this.container.addEventListener('onmousemove', this.onMouseMove);
+    this.container.addEventListener('onmouseup', this.onMouseUp);
+  }
+
+  public resetHandlers() {
+    this.container.removeEventListener('onmouseup', this.onMouseUp);
+    this.container.removeEventListener('onmousemove', this.onMouseMove);
+    this.container.removeEventListener('onmousedown', this.onMouseDown);
+  }
+
+  private onMouseDown(e: MouseEvent) {
     this.isMove = true;
     this.x = e.pageX - parseInt(this.container.style.left);
     this.y = e.pageY - parseInt(this.container.style.top);
   }
 
-  public onMouseMove(e: MouseEvent) {
+  private onMouseMove(e: MouseEvent) {
     if (this.isMove) {
       const x = e.pageX - this.x;
       const y = e.pageY - this.y;
@@ -30,7 +39,7 @@ class MovementManager {
     }
   }
 
-  public onMouseUp(_: MouseEvent) {
+  private onMouseUp(_: MouseEvent) {
     this.isMove = false;
   }
 }

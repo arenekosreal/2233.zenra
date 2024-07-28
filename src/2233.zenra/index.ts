@@ -95,11 +95,13 @@ function onVMObserveTriggered(
       `canvas${defines.canvasId}`,
     );
     newCanvas.className = defines.canvasClass;
-    new MovementManager(newCanvas.parentElement);
-    newCanvas.click = () => {
+    const movementManager = new MovementManager(newCanvas.parentElement);
+    window.addEventListener('l', movementManager.overrideHandlers);
+    window.addEventListener('beforeunload', movementManager.resetHandlers);
+    newCanvas.addEventListener('click', () => {
       const i = Math.floor(Math.random() * defines.msgs.length);
       oml2d.tipsMessage(defines.msgs[i], 1000, 5);
-    };
+    });
     console.log('没穿衣服的2233添加完成');
     needReplace = false;
   }
