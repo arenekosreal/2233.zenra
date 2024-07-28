@@ -102,10 +102,8 @@ function onVMObserveTriggered(
     };
     console.log('没穿衣服的2233添加完成');
     needReplace = false;
-    return true;
-  } else {
-    return true;
   }
+  return true;
 }
 
 console.log('[2233.zenra] 正在等待目标');
