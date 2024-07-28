@@ -25,19 +25,31 @@ const config = {
 };
 let needReplace = true;
 
-function getAssetsAddress(character: '22' | '33', large: boolean) {
+enum CharacterType {
+  C22 = '22',
+  C33 = '33',
+}
+
+function getAssetsAddress(character: CharacterType, large: boolean) {
   const modifier = large ? '@2x' : '';
   console.log('角色类型：' + character + modifier);
   return `${defines.assetsAddressBase}${character}/${character}.zenra${modifier}.json`;
 }
 
-function getCharacterType(): '22' | '33' {
+function getCharacterType(): CharacterType {
   const apiEndpoint = `https://api.live.bilibili.com/live/getRoomKanBanModel?roomid=${window.BilibiliLive.ROOMID}`;
-  let characterType: '22' | '33' = '22';
+  let characterType: CharacterType;
   const xhr = new XMLHttpRequest();
   xhr.responseType = 'json';
   xhr.onload = (_) => {
-    characterType = xhr.response.label;
+    const rawLabel = xhr.response.label;
+    switch (rawLabel) {
+      case '33':
+        characterType = CharacterType.C33;
+        break;
+      default:
+        characterType = CharacterType.C22;
+    }
   };
   xhr.open('GET', apiEndpoint);
   xhr.send();
@@ -89,6 +101,13 @@ function onVMObserveTriggered(
       statusBar: {
         disable: true,
       },
+      tips: {
+        style: {
+          textOverflow: 'ellipsis',
+          minHeight: '0px',
+        },
+      },
+      transitionTime: 0,
     });
 
     const newCanvas: HTMLCanvasElement = document.querySelector(
@@ -96,7 +115,10 @@ function onVMObserveTriggered(
     );
     newCanvas.className = defines.canvasClass;
     const movementManager = new MovementManager(newCanvas.parentElement);
-    window.addEventListener('l', movementManager.overrideHandlers);
+    window.addEventListener(
+      'DOMContentLoaded',
+      movementManager.overrideHandlers,
+    );
     window.addEventListener('beforeunload', movementManager.resetHandlers);
     newCanvas.addEventListener('click', () => {
       const i = Math.floor(Math.random() * defines.msgs.length);
