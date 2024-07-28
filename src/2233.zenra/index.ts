@@ -51,7 +51,6 @@ function onVMObserveTriggered(
   const canvas = document.querySelectorAll(defines.canvasSelector);
   if (needReplace) {
     let parentElement: HTMLElement;
-    let needReplaceOrAdd = true;
     if (canvas.length > 0) {
       console.log('发现2233，删除已有元素');
       const canvasElement = canvas[0];
@@ -62,12 +61,11 @@ function onVMObserveTriggered(
       parentElement = document.querySelector(
         defines.canvasNewContainerSelector,
       );
+      if (!parentElement) {
+        return false;
+      }
     } else {
       console.log('未发现2233，且不强制添加');
-      needReplaceOrAdd = false;
-    }
-
-    if (!needReplaceOrAdd) {
       return true;
     }
 
