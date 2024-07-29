@@ -160,8 +160,8 @@ function loadModel(parentElement: HTMLElement) {
         break;
     }
   });
-  oml2d.onStageSlideIn(movementManager.overrideHandlers);
-  oml2d.onStageSlideOut(movementManager.resetHandlers);
+  oml2d.onStageSlideIn(movementManager.overrideHandlers.bind(movementManager));
+  oml2d.onStageSlideOut(movementManager.resetHandlers.bind(movementManager));
   console.log('没穿衣服的2233添加完成');
 }
 
