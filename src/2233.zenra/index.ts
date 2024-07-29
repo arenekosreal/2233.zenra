@@ -22,10 +22,20 @@ const defines = {
     return `${this.canvasNewContainerTag}#${this.canvasNewContainerId}`;
   },
   modelScale: 0.3,
-  modelPositionX: 10,
+  modelPositionX: 15,
   modelPositionY: 100,
+  get stageTop() {
+    return `${this.modelPositionY}px`;
+  },
+  get stageRight() {
+    return `${this.modelPositionX}px`;
+  },
+  stageBottom: 'auto',
+  stageLeft: 'auto',
   tipsWidth: '100px',
   tipsHeight: '20px',
+  tipsShowtimeMs: 2000,
+  tipsPriority: 5,
   assetsAddressBase:
     'https://fastly.jsdelivr.net/gh/arenekosreal/2233.zenra/assets/',
   msgs: [
@@ -92,6 +102,14 @@ function loadModel(parentElement: HTMLElement) {
       },
     ],
     parentElement: parentElement,
+    stageStyle: {
+      inset: [
+        defines.stageTop,
+        defines.stageRight,
+        defines.stageBottom,
+        defines.stageLeft,
+      ].join(' '),
+    },
     statusBar: {
       disable: true,
     },
@@ -116,12 +134,32 @@ function loadModel(parentElement: HTMLElement) {
   });
 
   const newCanvas = document.querySelector(defines.canvasNewSelectorById);
-  newCanvas.classList.add(defines.canvasClass);
-  newCanvas.addEventListener('click', () => {
-    const i = Math.floor(Math.random() * defines.msgs.length);
-    oml2d.tipsMessage(defines.msgs[i], 1000, 5);
-  });
   const movementManager = new MovementManager(newCanvas.parentElement);
+  oml2d.onLoad((status) => {
+    switch (status) {
+      case 'success':
+        console.log('模型加载成功');
+        if (!newCanvas.classList.contains(defines.canvasClass)) {
+          newCanvas.classList.add(defines.canvasClass);
+        }
+
+        newCanvas.parentElement.addEventListener('click', () => {
+          const i = Math.floor(Math.random() * defines.msgs.length);
+          oml2d.tipsMessage(
+            defines.msgs[i],
+            defines.tipsShowtimeMs,
+            defines.tipsPriority,
+          );
+        });
+        break;
+      case 'loading':
+        console.log('正在加载模型');
+        break;
+      case 'fail':
+        console.log('模型加载失败');
+        break;
+    }
+  });
   oml2d.onStageSlideIn(movementManager.overrideHandlers);
   oml2d.onStageSlideOut(movementManager.resetHandlers);
   console.log('没穿衣服的2233添加完成');
