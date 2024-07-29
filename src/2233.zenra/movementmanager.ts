@@ -1,7 +1,8 @@
 class MovementManager {
   private isMove = false;
-  private x: number;
-  private y: number;
+  private isSet = false;
+  private x = -1;
+  private y = -1;
   private readonly container: HTMLElement;
 
   constructor(container: HTMLElement) {
@@ -9,15 +10,21 @@ class MovementManager {
   }
 
   public overrideHandlers() {
-    this.container.addEventListener('onmousedown', this.onMouseDown);
-    this.container.addEventListener('onmousemove', this.onMouseMove);
-    this.container.addEventListener('onmouseup', this.onMouseUp);
+    if (!this.isSet) {
+      this.container.addEventListener('onmousedown', this.onMouseDown);
+      this.container.addEventListener('onmousemove', this.onMouseMove);
+      this.container.addEventListener('onmouseup', this.onMouseUp);
+      this.isSet = true;
+    }
   }
 
   public resetHandlers() {
-    this.container.removeEventListener('onmouseup', this.onMouseUp);
-    this.container.removeEventListener('onmousemove', this.onMouseMove);
-    this.container.removeEventListener('onmousedown', this.onMouseDown);
+    if (this.isSet) {
+      this.container.removeEventListener('onmouseup', this.onMouseUp);
+      this.container.removeEventListener('onmousemove', this.onMouseMove);
+      this.container.removeEventListener('onmousedown', this.onMouseDown);
+      this.isSet = false;
+    }
   }
 
   private onMouseDown(e: MouseEvent) {

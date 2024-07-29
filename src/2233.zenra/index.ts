@@ -3,10 +3,27 @@ import { loadOml2d } from 'oh-my-live2d';
 import { MovementManager } from './movementmanager';
 
 const defines = {
+  canvasTag: 'canvas',
   canvasClass: 'haruna-canvas',
-  canvasSelector: 'canvas.haruna-canvas',
-  canvasId: '#oml2d-canvas',
-  canvasNewContainerSelector: 'div.aside-area',
+  canvasNewId: 'oml2d-canvas',
+  canvasNewContainerTag: 'div',
+  canvasNewContainerClass: 'aside-area',
+  canvasNewContainerId: 'aside-area-vm',
+  get canvasSelectorByClass() {
+    return `${this.canvasTag}.${this.canvasClass}`;
+  },
+  get canvasNewSelectorById() {
+    return `${this.canvasTag}#${this.canvasNewId}`;
+  },
+  get canvasNewContainerSelectorByClass() {
+    return `${this.canvasNewContainerTag}.${this.canvasNewContainerClass}`;
+  },
+  get canvasNewContainerSelectorById() {
+    return `${this.canvasNewContainerTag}#${this.canvasNewContainerId}`;
+  },
+  modelScale: 0.3,
+  modelPositionX: 10,
+  modelPositionY: 100,
   tipsWidth: '100px',
   tipsHeight: '20px',
   assetsAddressBase:
@@ -23,7 +40,6 @@ const defines = {
 const config = {
   forceAdd: true,
 };
-let needReplace = true;
 
 enum CharacterType {
   C22 = '22',
@@ -32,12 +48,14 @@ enum CharacterType {
 
 function getAssetsAddress(character: CharacterType, large: boolean) {
   const modifier = large ? '@2x' : '';
-  console.log('角色类型：' + character + modifier);
+  console.log('角色类型：', character, modifier);
   return `${defines.assetsAddressBase}${character}/${character}.zenra${modifier}.json`;
 }
 
 function getCharacterType(): CharacterType {
-  const roomId = window.BilibiliLive?.ROOMID ?? location.pathname.split('/')[1];
+  const roomId =
+    window.BilibiliLive?.ROOMID ?? parseInt(location.pathname.split('/')[1]);
+  console.log('房间ID：', roomId);
   const apiEndpoint = `https://api.live.bilibili.com/live/getRoomKanBanModel?roomid=${roomId}`;
   const xhr = new XMLHttpRequest();
   xhr.open('GET', apiEndpoint, false);
@@ -58,85 +76,97 @@ function getCharacterType(): CharacterType {
   return characterType;
 }
 
-function onVMObserveTriggered(
-  _: MutationRecord[],
-  __: MutationObserver,
-): boolean {
-  const canvas = document.querySelectorAll(defines.canvasSelector);
-  if (needReplace) {
-    let parentElement: HTMLElement;
-    if (canvas.length > 0) {
-      console.log('发现2233，删除已有元素');
-      const canvasElement = canvas[0];
-      parentElement = canvasElement.parentElement;
-      parentElement.removeChild(canvasElement);
-    } else if (config.forceAdd) {
-      console.log('未发现2233，强制添加');
-      parentElement = document.querySelector(
-        defines.canvasNewContainerSelector,
-      );
-      if (!parentElement) {
-        return false;
-      }
-    } else {
-      console.log('未发现2233，且不强制添加');
-      return true;
-    }
+function loadModel(parentElement: HTMLElement) {
+  const character = getCharacterType();
+  const oml2d = loadOml2d({
+    dockedPosition: 'right',
+    menus: {
+      disable: true,
+    },
+    models: [
+      {
+        name: character,
+        path: getAssetsAddress(character, window.devicePixelRatio > 1),
+        scale: defines.modelScale,
+        position: [defines.modelPositionX, defines.modelPositionY],
+      },
+    ],
+    parentElement: parentElement,
+    statusBar: {
+      disable: true,
+    },
+    tips: {
+      copyTips: {
+        duration: 0,
+      },
+      idleTips: {
+        duration: 0,
+      },
+      messageLine: 1,
+      style: {
+        minHeight: defines.tipsHeight,
+        minWidth: defines.tipsWidth,
+      },
+      welcomeTips: {
+        duration: 0,
+        message: {},
+      },
+    },
+    transitionTime: 0,
+  });
 
-    const character = getCharacterType();
-    const oml2d = loadOml2d({
-      dockedPosition: 'right',
-      menus: {
-        disable: true,
-      },
-      models: [
-        {
-          name: character,
-          path: getAssetsAddress(character, window.devicePixelRatio > 1),
-          scale: 0.3,
-          position: [10, 100],
-        },
-      ],
-      parentElement: parentElement,
-      statusBar: {
-        disable: true,
-      },
-      tips: {
-        copyTips: {
-          duration: 0,
-        },
-        idleTips: {
-          duration: 0,
-        },
-        messageLine: 1,
-        style: {
-          minHeight: defines.tipsHeight,
-          minWidth: defines.tipsWidth,
-        },
-        welcomeTips: {
-          duration: 0,
-          message: {},
-        },
-      },
-      transitionTime: 0,
-    });
-
-    const newCanvas: HTMLCanvasElement = document.querySelector(
-      `canvas${defines.canvasId}`,
-    );
-    newCanvas.className = defines.canvasClass;
-    const movementManager = new MovementManager(newCanvas.parentElement);
-    oml2d.onStageSlideIn(movementManager.overrideHandlers);
-    oml2d.onStageSlideOut(movementManager.resetHandlers);
-    newCanvas.addEventListener('click', () => {
-      const i = Math.floor(Math.random() * defines.msgs.length);
-      oml2d.tipsMessage(defines.msgs[i], 1000, 5);
-    });
-    console.log('没穿衣服的2233添加完成');
-    needReplace = false;
-  }
-  return true;
+  const newCanvas = document.querySelector(defines.canvasNewSelectorById);
+  newCanvas.classList.add(defines.canvasClass);
+  newCanvas.addEventListener('click', () => {
+    const i = Math.floor(Math.random() * defines.msgs.length);
+    oml2d.tipsMessage(defines.msgs[i], 1000, 5);
+  });
+  const movementManager = new MovementManager(newCanvas.parentElement);
+  oml2d.onStageSlideIn(movementManager.overrideHandlers);
+  oml2d.onStageSlideOut(movementManager.resetHandlers);
+  console.log('没穿衣服的2233添加完成');
 }
 
-console.log('[2233.zenra] 正在等待目标');
-const _ = VM.observe(document.body, onVMObserveTriggered);
+function onVMObserveTriggered(
+  mutationsList: MutationRecord[],
+  observer: MutationObserver,
+) {
+  for (const record of mutationsList) {
+    for (const node of record.addedNodes) {
+      if (node.nodeType === Node.ELEMENT_NODE) {
+        if (node.nodeName === defines.canvasTag.toUpperCase()) {
+          const canvasElement = node as HTMLCanvasElement;
+          if (canvasElement.classList.contains(defines.canvasClass)) {
+            console.log('发现2233，删除已有元素');
+            const parentElement = canvasElement.parentElement;
+            parentElement.removeChild(canvasElement);
+            loadModel(parentElement);
+            observer.disconnect();
+            return;
+          }
+        }
+      }
+    }
+  }
+}
+
+function onReadyStateChanged() {
+  if (document.readyState === 'complete') {
+    console.log('网页已经完成加载，终止MutationObserver');
+    observer.disconnect();
+    const containerElement = document.querySelector(
+      defines.canvasNewContainerSelectorById,
+    );
+    if (containerElement && config.forceAdd) {
+      console.log('未发现2233，强制添加');
+      loadModel(containerElement as HTMLElement);
+      document.removeEventListener('readystatechange', onReadyStateChanged);
+    }
+  }
+}
+
+const observer = new MutationObserver(onVMObserveTriggered);
+observer.observe(document.body, { childList: true, subtree: true });
+console.log('[2233.zenra] 已注册观察回调');
+document.addEventListener('readystatechange', onReadyStateChanged);
+console.log('[2233.zenra] 已注册状态改变回调');

@@ -11,7 +11,6 @@
 // @author              process.env.AUTHOR
 // @namespace           https://github.com/journey-ad
 // @icon                https://bilibili.com/favicon.ico
-// @require             https://fastly.jsdelivr.net/npm/@violentmonkey/dom@2
 // ==/UserScript==
 
 /**
