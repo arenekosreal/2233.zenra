@@ -1,7 +1,7 @@
 # 2233.zenra
 
-> **Warning**
-This userscript contains NSFW content
+> [!WARNING]
+> This userscript contains NSFW content
 
 This is a userscript initiated from [@violentmonkey/generator-userscript](https://github.com/violentmonkey/generator-userscript).
 
