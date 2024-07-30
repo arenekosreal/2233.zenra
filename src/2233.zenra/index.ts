@@ -37,7 +37,7 @@ const defines = {
   },
   stageBottom: 'auto',
   stageLeft: 'auto',
-  tipsWidth: '100px',
+  tipsWidth: '200px',
   tipsHeight: '20px',
   tipsShowtimeMs: 2000,
   tipsPriority: 5,
