@@ -1,5 +1,10 @@
 import './meta.js?userscript-metadata';
-import { loadOml2d } from 'oh-my-live2d';
+import {
+  loadOml2d,
+  Oml2dEvents,
+  Oml2dMethods,
+  Oml2dProperties,
+} from 'oh-my-live2d';
 import { MovementManager } from './movementmanager';
 
 const defines = {
@@ -86,12 +91,42 @@ function getCharacterType(): CharacterType {
   return characterType;
 }
 
+function onModelStatusBarClicked(
+  oml2d: Oml2dEvents & Oml2dMethods & Oml2dProperties,
+) {
+  oml2d.statusBarClose();
+  oml2d.statusBarClearEvents();
+  document.querySelector(
+    defines.canvasSelectorByClass,
+  ).parentElement.style.visibility = 'visible';
+  void oml2d.stageSlideIn();
+}
+
+function onModelRestClicked(
+  oml2d: Oml2dEvents & Oml2dMethods & Oml2dProperties,
+) {
+  oml2d.clearTips();
+  void oml2d.stageSlideOut();
+  document.querySelector(
+    defines.canvasSelectorByClass,
+  ).parentElement.style.visibility = 'hidden';
+  oml2d.setStatusBarClickEvent(() => onModelStatusBarClicked(oml2d));
+  oml2d.statusBarOpen(oml2d.options.statusBar?.restMessage);
+}
+
 function loadModel(parentElement: HTMLElement) {
   const character = getCharacterType();
   const oml2d = loadOml2d({
     dockedPosition: 'right',
     menus: {
-      disable: true,
+      items: [
+        {
+          id: 'rest',
+          icon: 'icon-rest',
+          title: '休息',
+          onClick: onModelRestClicked,
+        },
+      ],
     },
     models: [
       {
@@ -110,9 +145,7 @@ function loadModel(parentElement: HTMLElement) {
         defines.stageLeft,
       ].join(' '),
     },
-    statusBar: {
-      disable: true,
-    },
+    statusBar: {},
     tips: {
       copyTips: {
         duration: 0,
@@ -130,7 +163,6 @@ function loadModel(parentElement: HTMLElement) {
         message: {},
       },
     },
-    transitionTime: 0,
   });
 
   const newCanvas = document.querySelector(defines.canvasNewSelectorById);
@@ -143,13 +175,15 @@ function loadModel(parentElement: HTMLElement) {
           newCanvas.classList.add(defines.canvasClass);
         }
 
-        newCanvas.parentElement.addEventListener('click', () => {
-          const i = Math.floor(Math.random() * defines.msgs.length);
-          oml2d.tipsMessage(
-            defines.msgs[i],
-            defines.tipsShowtimeMs,
-            defines.tipsPriority,
-          );
+        newCanvas.addEventListener('click', () => {
+          if (!movementManager.isMoving) {
+            const i = Math.floor(Math.random() * defines.msgs.length);
+            oml2d.tipsMessage(
+              defines.msgs[i],
+              defines.tipsShowtimeMs,
+              defines.tipsPriority,
+            );
+          }
         });
         break;
       case 'loading':

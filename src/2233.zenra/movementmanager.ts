@@ -5,6 +5,10 @@ class MovementManager {
   private y = -1; // e.elementY
   private readonly container: HTMLElement;
 
+  public get isMoving() {
+    return this.isMove;
+  }
+
   constructor(container: HTMLElement) {
     this.container = container;
   }
@@ -84,10 +88,10 @@ class MovementManager {
   }
 
   private onMouseUp(_: MouseEvent) {
-    this.isMove = false;
     this.container.style.cursor = 'auto';
     this.x = -1;
     this.y = -1;
+    this.isMove = false;
   }
 
   private onDocumentMouseUp(_: MouseEvent) {
