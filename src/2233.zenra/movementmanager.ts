@@ -19,6 +19,10 @@ class MovementManager {
       this.container.addEventListener('mousedown', this.onMouseDown.bind(this));
       this.container.addEventListener('mousemove', this.onMouseMove.bind(this));
       this.container.addEventListener('mouseup', this.onMouseUp.bind(this));
+      this.container.addEventListener(
+        'mouseleave',
+        this.onMouseLeave.bind(this),
+      );
       document.addEventListener('mouseup', this.onDocumentMouseUp.bind(this));
       document.addEventListener(
         'mouseleave',
@@ -31,6 +35,18 @@ class MovementManager {
   public resetHandlers() {
     if (this.isSet) {
       console.log('移除移动回调');
+      document.removeEventListener(
+        'mouseleave',
+        this.onDocumentMouseLeave.bind(this),
+      );
+      document.removeEventListener(
+        'mouseup',
+        this.onDocumentMouseUp.bind(this),
+      );
+      this.container.removeEventListener(
+        'mouseleave',
+        this.onMouseLeave.bind(this),
+      );
       this.container.removeEventListener('mouseup', this.onMouseUp.bind(this));
       this.container.removeEventListener(
         'mousemove',
@@ -40,14 +56,7 @@ class MovementManager {
         'mousedown',
         this.onMouseDown.bind(this),
       );
-      document.removeEventListener(
-        'mouseup',
-        this.onDocumentMouseUp.bind(this),
-      );
-      document.removeEventListener(
-        'mouseleave',
-        this.onDocumentMouseLeave.bind(this),
-      );
+
       this.isSet = false;
     }
   }
@@ -92,6 +101,10 @@ class MovementManager {
     this.x = -1;
     this.y = -1;
     this.isMove = false;
+  }
+
+  private onMouseLeave(_: MouseEvent) {
+    this.onMouseUp(_);
   }
 
   private onDocumentMouseUp(_: MouseEvent) {

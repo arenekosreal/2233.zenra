@@ -26,7 +26,7 @@ const defines = {
   get canvasNewContainerSelectorById() {
     return `${this.canvasNewContainerTag}#${this.canvasNewContainerId}`;
   },
-  modelScale: 0.3,
+  modelScale: 0.2,
   modelPositionX: 15,
   modelPositionY: 100,
   get stageTop() {
@@ -153,7 +153,6 @@ function loadModel(parentElement: HTMLElement) {
       idleTips: {
         duration: 0,
       },
-      messageLine: 1,
       style: {
         minHeight: defines.tipsHeight,
         minWidth: defines.tipsWidth,
