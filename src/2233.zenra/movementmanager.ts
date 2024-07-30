@@ -86,8 +86,12 @@ class MovementManager {
     this.y = -1;
   }
 
-  private onDocumentMouseUp(_: MouseEvent) {}
-  private onDocumentMouseLeave(_: MouseEvent) {}
+  private onDocumentMouseUp(_: MouseEvent) {
+    this.onMouseUp(_);
+  }
+  private onDocumentMouseLeave(_: MouseEvent) {
+    this.onMouseUp(_);
+  }
 }
 
 export { MovementManager };
