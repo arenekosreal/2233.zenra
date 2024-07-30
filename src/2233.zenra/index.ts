@@ -28,7 +28,7 @@ const defines = {
   },
   modelScale: 0.2,
   modelPositionX: 15,
-  modelPositionY: 100,
+  modelPositionY: 75,
   get stageTop() {
     return `${this.modelPositionY}px`;
   },
