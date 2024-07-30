@@ -60,15 +60,19 @@ class MovementManager {
       this.container.style.cursor = 'grabbing';
       const x = e.pageX - this.x; // delta.pageX
       const y = e.pageY - this.y; // delta.pageY
-      const maxPageLeft = window.innerWidth - this.container.offsetWidth;
-      const maxPageTop = window.innerHeight - this.container.offsetHeight;
       const bondingClientRect = this.container.getBoundingClientRect();
+      const parentBondingClientRect =
+        this.container.parentElement.getBoundingClientRect();
+      const minPageLeft = parentBondingClientRect.left;
+      const maxPageLeft = window.innerWidth - this.container.offsetWidth;
+      const minPageTop = parentBondingClientRect.top;
+      const maxPageTop = window.innerHeight - this.container.offsetHeight;
       const targetPageLeft = bondingClientRect.left + x;
       const targetPageTop = bondingClientRect.top + y;
       if (
-        targetPageLeft >= 0 &&
+        targetPageLeft >= minPageLeft &&
         targetPageLeft <= maxPageLeft &&
-        targetPageTop >= 0 &&
+        targetPageTop >= minPageTop &&
         targetPageTop <= maxPageTop
       ) {
         this.container.style.left = `${targetPageLeft}px`;
